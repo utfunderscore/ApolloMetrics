@@ -18,10 +18,16 @@ public class ApolloMetrics {
     private final InfluxDBClient influxClient;
     private final InfluxDBClientOptions options;
 
-    public ApolloMetrics(InfluxDBClientOptions options) {
+    private ApolloMetrics(InfluxDBClientOptions options) {
         this.influxClient = InfluxDBClientFactory.create(options);
         this.options = options;
-        instance = this;
+    }
+
+    public static void init(InfluxDBClientOptions options) {
+        if (instance != null) {
+            throw new IllegalStateException("ApolloMetrics has already been initialized.");
+        }
+        instance = new ApolloMetrics(options);
     }
 
     public static EventStore getEventStore(String in) {
